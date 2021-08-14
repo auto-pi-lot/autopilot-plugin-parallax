@@ -1,0 +1,45 @@
+digraph {
+  charset="utf-8";
+
+  accel[label="accelerometer reading"]
+  spheroid[label="spheroid calibration"]
+  gyro[label="gyroscope reading"]
+  orientation[label="IMU_Orientation"]
+  rot[label="Rotate Accelerometer Readings"]
+  gravity[label="Subtract Gravity"]
+  y_accel[label="Absolute Y-axis Acceleration"]
+  cam[label="PiCamera"]
+  dlc[label="DLC-Live"]
+  y_pos[label="Y-axis Position"]
+  kalman2[label="2nd-order Kalman Filter"]
+  filt_a[label="Filtered Y Acceleration"]
+  filt_v[label="Filtered Y Velocity"]
+  filt_y[label="Filtered Y Position"]
+  scale[label="Trial Scale"]
+  plat[label="Platform Velocity"]
+
+
+  accel -> spheroid
+  spheroid -> orientation
+  gyro -> orientation
+  orientation -> rot
+  accel -> rot
+  gyro -> rot
+  rot -> gravity
+  gravity -> y_accel
+
+  cam -> dlc
+  dlc -> y_pos
+
+  y_accel -> kalman2
+  y_pos -> kalman2
+
+  kalman2 -> filt_a
+  kalman2 -> filt_v
+  kalman2 -> filt_y
+
+  filt_v -> scale
+
+  scale -> plat
+
+}
