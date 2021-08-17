@@ -34,7 +34,7 @@ def plot_kalman(pos, vel, accel, measurements):
     fig, ax = plt.subplots(3, 1) # type: typing.List[plt.axes]
 
 
-    ax[0].plot(pos_x, pos_y, 'k-', linewidth=0.5, label='real')
+    ax[0].plot(pos_x, pos_y, 'k-', linewidth=0.5, label='sensor reading')
     ax[0].plot(meas_x, meas_pos, 'r-', linewidth=0.5, label='estimated')
 
     ax[0].legend()
@@ -46,7 +46,7 @@ def plot_kalman(pos, vel, accel, measurements):
     ax[1].set_title('Velocity')
     ax[1].legend()
 
-    ax[2].plot(accel_x, accel_y, 'k-', linewidth=0.5, label='real')
+    ax[2].plot(accel_x, accel_y, 'k-', linewidth=0.5, label='sensor reading')
     ax[2].plot(meas_x, meas_acc, 'r-', linewidth=0.5, label='estimated')
 
     ax[2].set_title('Acceleration')

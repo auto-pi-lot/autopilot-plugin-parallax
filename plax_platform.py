@@ -87,12 +87,6 @@ class Parallax_Platform(Hardware):
         >>> plat[:,2] = 1000
 
 
-    Todo:
-
-        The platform is intended to have two modes -- position and velocity (see :attr:`.Move_Modes` and
-        :attr:`.move_mode`), where the user can either set a position or set a velocity. The velocity mode has been
-        implemented in :meth:`.start_move_script` but has not yet been exposed to the object.
-
     Args:
         pulse_dur (int): duration of stepper pulse used while in 'position' mode (see :attr:`.move_mode`) in  microseconds
         delay_dur (int): duration of delay between stepper pulses used while in 'position' mode in microseconds, so frequency of stepper

@@ -40,6 +40,8 @@ class Kalman_Position(Kalman):
     (from :class:`~autopilot.transform.geometry.IMU_Orientation`) and position measurements
     (from :class:`~autopilot.transform.image.DLC`).
     """
+    Measurement = KPos_Measurement
+    Motion = Motion
 
     def __init__(self, use_timestamps:bool=False, **kwargs):
         """
