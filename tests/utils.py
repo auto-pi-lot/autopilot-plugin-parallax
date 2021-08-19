@@ -18,6 +18,8 @@ def plot_sines(pos:typing.List['KPos_Measurement'], accel:typing.List['KPos_Meas
     ax.plot(accel_x, accel_y)
     plt.show()
 
+
+
 def plot_kalman(pos, vel, accel, measurements):
 
     pos_x = [x.timestamp for x in pos]
@@ -32,7 +34,6 @@ def plot_kalman(pos, vel, accel, measurements):
     meas_acc = [x.acceleration for x in measurements]
 
     fig, ax = plt.subplots(3, 1) # type: typing.List[plt.axes]
-
 
     ax[0].plot(pos_x, pos_y, 'k-', linewidth=0.5, label='sensor reading')
     ax[0].plot(meas_x, meas_pos, 'r-', linewidth=0.5, label='estimated')

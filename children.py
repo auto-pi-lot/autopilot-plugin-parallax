@@ -1,3 +1,6 @@
+import typing
+from threading import Event, Thread
+
 import autopilot
 from autopilot.tasks.children import Child
 from autopilot import prefs
@@ -16,7 +19,7 @@ class Parallax_Child(Child):
     }
 
 
-    IMU_Transform = [
+    IMU_Transform = (
         {
             'transform': 'Rotate',
             'kwargs': {'dims': 'xy'}
@@ -29,7 +32,7 @@ class Parallax_Child(Child):
             'transform': 'Add',
             'kwargs': {'value': -9.8}
         }
-    ]
+    ) # type: typing.Tuple[dict]
     """
     Take the accelerometer, gyro, and orientation readings through to
     an estimation of absolute vertical acceleration
@@ -44,6 +47,8 @@ class Parallax_Child(Child):
                  *args, **kwargs):
         super(Parallax_Child, self).__init__(*args, **kwargs)
 
+        self.stopping = Event()
+
         imu_prefs = prefs.get('HARDWARE')['MOTION']['IMU']
         cam_prefs = prefs.get('HARDWARE')['CAMS']['SIDE']
 
@@ -52,6 +57,11 @@ class Parallax_Child(Child):
 
         self.imu_transform = make_transform(self.IMU_Transform)
         self.fusion = autopilot.get('transform', 'Kalman_Position')()
+
+    def _read_imu(self):
+
+        while not self.stopping.is_set():
+            rotation = self.imu.
 
 
 

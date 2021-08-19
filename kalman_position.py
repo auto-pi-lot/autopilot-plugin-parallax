@@ -15,10 +15,10 @@ class KPos_Measurement:
     """
     measure_type: str
     """The type of measurement contained, either 'acceleration' or 'position'"""
-    timestamp: datetime
-    """Time that the measurement was taken"""
     value: float
     """value of the measurement!"""
+    timestamp: datetime = field(default_factory=datetime.now)
+    """Time that the measurement was taken"""
 
 
 @dataclass

@@ -18,8 +18,6 @@ from datetime import datetime
 
 import numpy as np
 
-from autopilot.hardware import cameras
-from autopilot.hardware.esoteric import Parallax_Platform
 from autopilot.tasks import Task
 from autopilot.networking import Net_Node
 
@@ -124,15 +122,12 @@ class Parallax(Task):
 
     HARDWARE = {
         'PLAT':{
-            'FORM': Parallax_Platform
-        },
-        'CAMS':{
-            'SIDE': cameras.PiCamera
+            'FORM': "Parallax_Platform"
         }
     }
 
     CHILDREN = {
-        'MOTION': {
+        'SENSOR': {
             'task_type': "Parallax Child",
             'cams': [
                 {'type': 'Camera_OpenCV',
@@ -220,7 +215,6 @@ class Parallax(Task):
                              port=prefs.get('MSGPORT'),
                              router_port=node_port,
                              listens = {
-                                 'DLC': self.l_dlc,
                                  'MOTION': self.l_motion
                              },
                              instance = True)
@@ -243,22 +237,22 @@ class Parallax(Task):
                 }
             }
         ]
-        # this will start the DLC transformer, see tasks/children::Transformer
-        self.node.send(
-            to=[prefs.get('NAME'), self.child_dlc_id],
-            key='START',
-            value= {
-                'child': {'parent': prefs.get('NAME'), 'subject': self.subject},
-                'task_type': 'Transformer',
-                'subject': self.subject,
-                'operation': 'stream',
-                'transform': transform_descriptor,
-                'return_id': self.node_id,
-                'return_ip': self.node.ip,
-                'return_port': self.node_port,
-                'return_key': 'DLC'
-            }
-        )
+        # # this will start the DLC transformer, see tasks/children::Transformer
+        # self.node.send(
+        #     to=[prefs.get('NAME'), self.child_dlc_id],
+        #     key='START',
+        #     value= {
+        #         'child': {'parent': prefs.get('NAME'), 'subject': self.subject},
+        #         'task_type': 'Transformer',
+        #         'subject': self.subject,
+        #         'operation': 'stream',
+        #         'transform': transform_descriptor,
+        #         'return_id': self.node_id,
+        #         'return_ip': self.node.ip,
+        #         'return_port': self.node_port,
+        #         'return_key': 'DLC'
+        #     }
+        # )
 
         # start IMU child
         self.node.send(
@@ -266,7 +260,7 @@ class Parallax(Task):
             key='START',
             value = {
                 'child': {'parent': prefs.get('NAME'), 'subject': self.subject},
-                'task_type': 'Stream_Hardware',
+                'task_type': 'Parallax_Child',
                 'subject': self.subject,
                 'return_id': self.node_id,
                 'return_ip': self.node.ip,
@@ -278,18 +272,13 @@ class Parallax(Task):
 
         ## -------------------
 
-        # TODO: Setup kalman filter transform
-
-        # Start streaming frames to DLC agent
-        self.hardware['CAMS']['SIDE'].stream(
-            to=self.child_dlc_id,
-            min_size=1
-        )
-        self.hardware['CAMS']['SIDE'].capture()
-
         self.stages = itertools.cycle([self.request, self.jump, self.reinforcement])
 
         self.n_trials = itertools.count()
+
+        # --------------------------------------------------
+        # level platform
+        self.hardware['PLAT']['FORM'].level()
 
 
 
@@ -302,7 +291,7 @@ class Parallax(Task):
     # --------------------------------------------------
 
     def request(self):
-        self.stage_block.clear()
+        # self.stage_block.clear()
 
         # prevent calling any triggers rn
         self.trigger_lock.acquire()
@@ -318,6 +307,8 @@ class Parallax(Task):
         self.velocity_multiplier = np.random.choice(self.velocity_multipliers)
 
         self.current_trial = next(self.trial_counter)
+
+        self.trigger_lock.release()
 
         return {
             'trial_num': self.current_trial,
