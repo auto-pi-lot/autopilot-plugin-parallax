@@ -10,8 +10,8 @@ if __name__ == "__main__":
     fusion_lock = Lock()
 
 
-    imu_prefs = {}
-    cam_prefs = {}
+    imu_prefs = {'name':'imu'}
+    cam_prefs = {'name':'picam'}
 
     IMU_Transform = (
             {
