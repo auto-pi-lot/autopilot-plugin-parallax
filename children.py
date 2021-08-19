@@ -61,7 +61,8 @@ class Parallax_Child(Child):
     def _read_imu(self):
 
         while not self.stopping.is_set():
-            rotation = self.imu.
+            pass
+            # rotation = self.imu.
 
 
 
