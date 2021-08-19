@@ -4,7 +4,7 @@ from autopilot.transform import make_transform
 from threading import Lock
 from autopilot.core.loggers import init_logger
 
-if __name__ = "__main__":
+if __name__ == "__main__":
     logger = init_logger(module_name='main', class_name='main')
 
     fusion_lock = Lock()
