@@ -54,10 +54,10 @@ if __name__ == "__main__":
         global fusion
         global logger
         logger.info('dlc points: '+ str(value))
-        measurement = fusion.KPos_Measurement(measure_type='position', value=value)
+        measurement = fusion.Measurement(measure_type='position', value=value)
         update_fusion(measurement)
 
-    def update_fusion(value:fusion.KPos_Measurement):
+    def update_fusion(value:fusion.Measurement):
         global fusion_lock
         global fusion
         global node
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         accel = imu._acceleration
 
         y_accel = imu_transform.process((accel, rotation))
-        measurement = fusion.KPos_Measurement(measure_type='acceleration', value=y_accel)
+        measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
         update_fusion(measurement)
 
 
