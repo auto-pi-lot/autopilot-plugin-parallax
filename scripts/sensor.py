@@ -2,8 +2,10 @@ import autopilot
 from autopilot.networking import Net_Node
 from autopilot.transform import make_transform
 from threading import Lock
+from autopilot.core.loggers import init_logger
 
 if __name__ = "__main__":
+    logger = init_logger(module_name='main', class_name='main')
 
     fusion_lock = Lock()
 
@@ -31,7 +33,9 @@ if __name__ = "__main__":
     """
 
     imu = autopilot.get_hardware('I2C_9DOF')(**imu_prefs)
+    logger.info('imu initialized')
     cam = autopilot.get_hardware('PiCamera')(**cam_prefs)
+    logger.info('picam initialized')
 
     imu_transform = make_transform(IMU_Transform)
     fusion = autopilot.get('transform', 'Kalman_Position')()
@@ -42,12 +46,14 @@ if __name__ = "__main__":
     state = {}
     def set_state(value:dict):
         global state
-        print(value)
+        global logger
+        logger.info('set state: '+ str(value))
         state.update(value)
 
     def get_dlc(value):
         global fusion
-        print(value)
+        global logger
+        logger.info('dlc points: '+ str(value))
         measurement = fusion.KPos_Measurement(measure_type='position', value=value)
         update_fusion(measurement)
 
@@ -58,6 +64,7 @@ if __name__ = "__main__":
         with fusion_lock:
             motion = fusion.process(value)
             node.send(to='plaxer', key='VELOCITY', value=motion.velocity)
+            logger.info('sending velocity: ' + str(motion))
 
 
     node = Net_Node(
@@ -73,6 +80,7 @@ if __name__ = "__main__":
     )
 
     cam.capture()
+    logger.info('camera capture initialized')
 
     while True:
         rotation = imu.rotation
