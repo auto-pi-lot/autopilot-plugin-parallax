@@ -11,7 +11,12 @@ if __name__ == "__main__":
 
 
     imu_prefs = {'name':'imu'}
-    cam_prefs = {'name':'picam'}
+    cam_prefs = {
+        'name':'picam',
+        'format':'grayscale',
+        'resolution': (640,480),
+        'fps': 30
+    }
 
     IMU_Transform = (
             {
