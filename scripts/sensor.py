@@ -108,6 +108,8 @@ if __name__ == "__main__":
         y_accel = float(imu_transform.process((accel, rotation)))
         measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
         motion = update_fusion(measurement)
-        plot_node.send(to='plotter', key='DATA', value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(motion.velocity)})
+        plot_node.send(to='plotter', key='DATA',
+                       value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(motion.velocity)},
+                       flags={'NOREPEAT':True})
 
 
