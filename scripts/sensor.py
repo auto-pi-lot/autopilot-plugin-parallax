@@ -48,7 +48,7 @@ if __name__ == "__main__":
     imu_transform = make_transform(IMU_Transform)
     fusion = autopilot.get('transform', 'Kalman_Position')()
 
-    cam.stream(to='dlc_TRANSFORMER',ip='192.168.0.249',port=5002)
+    cam.stream(to='dlc_TRANSFORMER',ip='192.168.0.249',port=5002,min_size=1)
 
     global state
     state = {}
