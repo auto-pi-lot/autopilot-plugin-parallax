@@ -87,15 +87,26 @@ if __name__ == "__main__":
         daemon=False
     )
 
+    plot_node = Net_Node(
+        id='sensor_plot',
+        upstream='plotter',
+        port=6000,
+        listens={},
+        upstream_ip='192.168.0.100',
+        router_port=6000,
+        daemon=False
+    )
+
     cam.capture()
     logger.info('camera capture initialized')
 
     while True:
         rotation = imu.rotation
-        accel = imu._acceleration
+        accel, gyro = imu._acceleration, imu._gyro
 
         y_accel = float(imu_transform.process((accel, rotation)))
         measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
         update_fusion(measurement)
+        plot_node.send(to='plotter', key='DATA', value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(measurement.velocity)})
 
 
