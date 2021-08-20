@@ -10,7 +10,10 @@ if __name__ == "__main__":
     fusion_lock = Lock()
 
 
-    imu_prefs = {'name':'imu'}
+    imu_prefs = {
+        'name':'imu',
+        'invert_gyro': True
+    }
     cam_prefs = {
         'name':'picam',
         'format':'grayscale',
@@ -25,7 +28,7 @@ if __name__ == "__main__":
             },
             {
                 'transform': 'Slice',
-                'kwargs': {'select': slice(1)}
+                'kwargs': {'select': 1}
             },
             {
                 'transform': 'Add',
@@ -45,7 +48,7 @@ if __name__ == "__main__":
     imu_transform = make_transform(IMU_Transform)
     fusion = autopilot.get('transform', 'Kalman_Position')()
 
-    cam.stream(to='dlc',ip='192.168.0.249',port=5002)
+    cam.stream(to='dlc_TRANSFORMER',ip='192.168.0.249',port=5002)
 
     global state
     state = {}
@@ -69,7 +72,7 @@ if __name__ == "__main__":
         with fusion_lock:
             motion = fusion.process(value)
             node.send(to='plaxer', key='VELOCITY', value=motion.velocity)
-            logger.info('sending velocity: ' + str(motion))
+            logger.info(f'sending velocity: {motion.velocity} from input value: {value}')
 
 
     node = Net_Node(
