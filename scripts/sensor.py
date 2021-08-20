@@ -94,7 +94,7 @@ if __name__ == "__main__":
         rotation = imu.rotation
         accel = imu._acceleration
 
-        y_accel = imu_transform.process((accel, rotation))
+        y_accel = float(imu_transform.process((accel, rotation)))
         measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
         update_fusion(measurement)
 
