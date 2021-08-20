@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     imu_prefs = {
         'name':'imu',
-        'invert_gyro': True
+        'invert_gyro': (0, 1),
     }
     cam_prefs = {
         'name':'picam',
@@ -24,11 +24,11 @@ if __name__ == "__main__":
     IMU_Transform = (
             {
                 'transform': 'Rotate',
-                'kwargs': {'dims': 'xy'}
+                'kwargs': {'dims': 'xy', 'inverse': 'y'}
             },
             {
                 'transform': 'Slice',
-                'kwargs': {'select': 1}
+                'kwargs': {'select': 2}
             },
             {
                 'transform': 'Add',
