@@ -71,8 +71,8 @@ if __name__ == "__main__":
         global node
         with fusion_lock:
             motion = fusion.process(value)
-            node.send(to='plaxer', key='VELOCITY', value=motion.velocity, flags={'NOLOG':True})
-            logger.info(f'sending velocity: {motion.velocity} from input value: {value}')
+            node.send(to='plaxer', key='VELOCITY', value=float(motion.velocity), flags={'NOLOG':True})
+            logger.info(f'sending velocity: {float(motion.velocity)} from input value: {value}')
 
 
     node = Net_Node(
