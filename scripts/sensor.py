@@ -72,7 +72,7 @@ if __name__ == "__main__":
         with fusion_lock:
             motion = fusion.process(value)
             node.send(to='plaxer', key='VELOCITY', value=float(motion.velocity), flags={'NOLOG':True})
-            logger.info(f'sending velocity: {float(motion.velocity)} from input value: {value}')
+            logger.debug(f'sending velocity: {float(motion.velocity)} from input value: {value}')
         return motion
 
 
