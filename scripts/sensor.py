@@ -73,6 +73,7 @@ if __name__ == "__main__":
             motion = fusion.process(value)
             node.send(to='plaxer', key='VELOCITY', value=float(motion.velocity), flags={'NOLOG':True})
             logger.info(f'sending velocity: {float(motion.velocity)} from input value: {value}')
+        return motion
 
 
     node = Net_Node(
@@ -106,7 +107,7 @@ if __name__ == "__main__":
 
         y_accel = float(imu_transform.process((accel, rotation)))
         measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
-        update_fusion(measurement)
-        plot_node.send(to='plotter', key='DATA', value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(measurement.velocity)})
+        motion = update_fusion(measurement)
+        plot_node.send(to='plotter', key='DATA', value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(motion.velocity)})
 
 
