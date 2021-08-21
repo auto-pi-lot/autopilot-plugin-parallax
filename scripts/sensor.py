@@ -62,8 +62,8 @@ if __name__ == "__main__":
     def get_dlc(value):
         global fusion
         global logger
-        logger.info('dlc points: '+ str(value))
-        measurement = fusion.Measurement(measure_type='position', value=value)
+        logger.debug('dlc points: '+ str(value))
+        measurement = fusion.Measurement(measure_type='position', value=float(value[0,0]))
         update_fusion(measurement)
 
     def update_fusion(value:fusion.Measurement):
