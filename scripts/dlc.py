@@ -15,7 +15,7 @@ if __name__ == "__main__":
         return_ip='192.168.0.240',
         return_port=5000,
         return_key="DLC",
-        router_port = 5002,
+        router_port = 5001,
         forward_id='plotter',
         forward_ip='192.168.0.100',
         forward_key='IMAGE',
