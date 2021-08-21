@@ -18,6 +18,7 @@ if __name__ == "__main__":
         forward_id='plotter',
         forward_ip='192.168.0.100',
         forward_key='IMAGE',
+        forward_port=6000,
         forward_what='both'
     )
 
