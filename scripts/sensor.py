@@ -18,7 +18,8 @@ if __name__ == "__main__":
         'name':'picam',
         'format':'grayscale',
         'resolution': (320,240),
-        'fps': 15
+        'fps': 15,
+        'rotate': 3
     }
 
     IMU_Transform = (
