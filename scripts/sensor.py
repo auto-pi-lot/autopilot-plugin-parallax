@@ -59,11 +59,14 @@ if __name__ == "__main__":
         logger.info('set state: '+ str(value))
         state.update(value)
 
+    global position = 0
     def get_dlc(value):
         global fusion
         global logger
+        global position
         logger.debug('dlc points: '+ str(value))
-        measurement = fusion.Measurement(measure_type='position', value=float(value[0,0]))
+        position = float(value[0,0])
+        measurement = fusion.Measurement(measure_type='position', value=position)
         update_fusion(measurement)
 
     def update_fusion(value:fusion.Measurement):
@@ -110,7 +113,7 @@ if __name__ == "__main__":
         measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
         motion = update_fusion(measurement)
         plot_node.send(to='plotter', key='DATA',
-                       value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(motion.velocity)},
+                       value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(motion.velocity), 'position': position},
                        flags={'NOREPEAT':True})
 
 
