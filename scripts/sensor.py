@@ -116,7 +116,7 @@ if __name__ == "__main__":
         measurement = fusion.Measurement(measure_type='acceleration', value=y_accel)
         motion = update_fusion(measurement)
         plot_node.send(to='plotter', key='DATA',
-                       value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':float(motion.velocity), 'position': position},
+                       value={'rotation':rotation,'accel':accel,'gyro':gyro,'velocity':[float(motion.velocity), y_accel], 'position': position},
                        flags={'NOREPEAT':True})
 
 

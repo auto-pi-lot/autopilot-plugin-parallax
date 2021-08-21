@@ -64,9 +64,12 @@ class PlotWindow(QtWidgets.QMainWindow):
                 self.curves[sensor][ax] = widg.plot(pen=color,name=ax)
                 self.arrays[sensor][ax] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
         self.curves['position'] = self.position.plot(name='z position')
-        self.curves['velocity'] = self.velocity.plot(name='z velocity')
+        self.curves['velocity'] = {'estimated': self.velocity.plot(name='estimated'), 'rotated': self.velocity.plot(name='rotated', color=(255,0,0))}
         self.arrays['position'] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
-        self.arrays['velocity'] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
+        self.arrays['velocity'] = (
+            (deque(maxlen=queue_size), deque(maxlen=queue_size)),
+            (deque(maxlen=queue_size), deque(maxlen=queue_size))
+        )
         self.arrays['rotation'] = (0,0,0)
 
         self.img_q = deque(maxlen=1)
@@ -120,7 +123,8 @@ class PlotWindow(QtWidgets.QMainWindow):
             self.curves['gyro'][ax].setData(self.arrays['gyro'][ax][0], self.arrays['gyro'][ax][1])
 
         self.curves['position'].setData(self.arrays['position'][0], self.arrays['position'][1])
-        self.curves['velocity'].setData(self.arrays['velocity'][0], self.arrays['velocity'][1])
+        self.curves['velocity']['estimated'].setData(self.arrays['velocity'][0][0], self.arrays['velocity'][0][1])
+        self.curves['velocity']['rotated'].setData(self.arrays['velocity'][0][0], self.arrays['velocity'][0][1])
 
         self.orientation.setData(pos=np.array(((0, 0, 0), self.arrays['rotation'])))
 
@@ -156,8 +160,10 @@ class PlotWindow(QtWidgets.QMainWindow):
             self.arrays['position'][1].append(data['position'])
 
         if 'velocity' in data.keys():
-            self.arrays['velocity'][0].append(time())
-            self.arrays['velocity'][1].append(data['velocity'])
+            self.arrays['velocity'][0][0].append(time())
+            self.arrays['velocity'][1][0].append(time())
+            self.arrays['velocity'][0][1].append(data['velocity'][0])
+            self.arrays['velocity'][1][1].append(data['velocity'][1])
 
         if 'rotation' in data.keys():
             self.arrays['rotation'] = self.rotator.process(((0,0,1),data['rotation']))
