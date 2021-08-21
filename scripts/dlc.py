@@ -13,6 +13,7 @@ if __name__ == "__main__":
         value_subset='picam',
         return_id='sensor',
         return_ip='192.168.0.240',
+        return_port=5000,
         return_key="DLC",
         router_port = 5002,
         forward_id='plotter',

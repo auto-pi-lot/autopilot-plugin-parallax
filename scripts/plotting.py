@@ -82,6 +82,12 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.rotator = autopilot.get('transform', 'Rotate')(dims='xy', inverse='y')
 
         # image display
+        self.imagewidget = pg.PlotWidget(parent=self, title='Video Feed')
+        self.image = pg.ImageItem()
+        self.image.setZValue(-100)
+        self.dlc_points = pg.ScatterPlotItem()
+        self.imagewidget.addItem(self.image)
+        self.imagewidget.addItem(self.dlc_points)
         self.image = pg.ImageView(parent=self, name='Video Feed')
 
         self.layout.addWidget(self.position, 0, 0, 1,2)
@@ -130,7 +136,8 @@ class PlotWindow(QtWidgets.QMainWindow):
             self.orientation.setData(pos=np.array(((0,0,0),(x,y,z))))
 
     def l_image(self, image):
-        print(image)
+        self.image.setImage(image['input'])
+        self.dlc_points.setData(pos=image[output][:,0:2])
 
 
 
