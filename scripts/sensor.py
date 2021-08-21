@@ -17,8 +17,8 @@ if __name__ == "__main__":
     cam_prefs = {
         'name':'picam',
         'format':'grayscale',
-        'resolution': (640,480),
-        'fps': 30
+        'resolution': (320,240),
+        'fps': 15
     }
 
     IMU_Transform = (

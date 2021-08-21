@@ -42,8 +42,9 @@ def mesh_sphere(x_points = 13, y_points=13):
     return np.column_stack((x.flatten(), y.flatten(), z.flatten()))
 
 class PlotWindow(QtWidgets.QMainWindow):
-    def __init__(self, queue_size=500, *args, **kwargs):
+    def __init__(self, queue_size=500, fps=10, *args, **kwargs):
         super(PlotWindow, self).__init__(*args, **kwargs)
+        self.fps = fps
         self.layout = QtWidgets.QGridLayout()
         self.widget = QtWidgets.QWidget()
         self.widget.setLayout(self.layout)
@@ -66,6 +67,10 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.curves['velocity'] = self.velocity.plot(name='z velocity')
         self.arrays['position'] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
         self.arrays['velocity'] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
+        self.arrays['rotation'] = (0,0,0)
+
+        self.img_q = deque(maxlen=1)
+        self.dlc_q = deque(maxlen=1)
 
         # orientation vector
         self.sphere = gl.GLScatterPlotItem(pos=mesh_sphere(), color=(1,1,1,0.3),size=5)
@@ -88,20 +93,47 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.dlc_points = pg.ScatterPlotItem()
         self.imagewidget.addItem(self.image)
         self.imagewidget.addItem(self.dlc_points)
-        self.image = pg.ImageView(parent=self, name='Video Feed')
 
-        self.layout.addWidget(self.position, 0, 0, 1,2)
-        self.layout.addWidget(self.velocity, 1, 0, 1,2)
-        self.layout.addWidget(self.accel, 2, 0, 1,2)
-        self.layout.addWidget(self.gyro, 3, 0, 1,2)
-        self.layout.addWidget(self.glview, 0,2, 2, 1)
-        self.layout.addWidget(self.image, 2,2, 2, 1)
+        self.layout.addWidget(self.position, 0, 0, 1,1)
+        self.layout.addWidget(self.velocity, 1, 0, 1,1)
+        self.layout.addWidget(self.accel, 2, 0, 1,1)
+        self.layout.addWidget(self.gyro, 3, 0, 1,1)
+        self.layout.addWidget(self.glview, 0,1, 2, 1)
+        self.layout.addWidget(self.imagewidget, 2,1, 2, 1)
+        self.layout.setColumnStretch(0,3)
+        self.layout.setColumnStretch(1,1)
 
         self.node = Net_Node(id='plotter',upstream='',port=9999,
                              listens={'DATA':self.l_data,'IMAGE':self.l_image},
                              router_port=6000)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.timed_update)
+        self.timer.start((1/self.fps)*1000)
+
         #self.test()
+
+    def timed_update(self):
+
+        for ax in ('x', 'y', 'z'):
+            self.curves['accel'][ax].setData(self.arrays['accel'][ax][0], self.arrays['accel'][ax][1])
+            self.curves['gyro'][ax].setData(self.arrays['gyro'][ax][0], self.arrays['gyro'][ax][1])
+
+        self.curves['position'].setData(self.arrays['position'][0], self.arrays['position'][1])
+        self.curves['velocity'].setData(self.arrays['velocity'][0], self.arrays['velocity'][1])
+
+        self.orientation.setData(pos=np.array(((0, 0, 0), self.arrays['rotation'])))
+
+        try:
+            self.image.setImage(self.img_q.pop())
+        except IndexError:
+            pass
+
+        try:
+            self.dlc_points.setData(pos=self.dlc_q.pop())
+        except IndexError:
+            pass
+
 
     def test(self):
         for ax in ('x','y','z'):
@@ -113,31 +145,27 @@ class PlotWindow(QtWidgets.QMainWindow):
             for val, ax in zip(data['accel'], ('x','y','z')):
                 self.arrays['accel'][ax][0].append(time())
                 self.arrays['accel'][ax][1].append(val)
-                self.curves['accel'][ax].setData(self.arrays['accel'][ax][0], self.arrays['accel'][ax][1])
 
         if 'gyro' in data.keys():
             for val, ax in zip(data['gyro'], ('x','y','z')):
                 self.arrays['gyro'][ax][0].append(time())
                 self.arrays['gyro'][ax][1].append(val)
-                self.curves['gyro'][ax].setData(self.arrays['gyro'][ax][0], self.arrays['gyro'][ax][1])
 
         if 'position' in data.keys():
             self.arrays['position'][0].append(time())
             self.arrays['position'][1].append(data['position'])
-            self.curves['position'].setData(self.arrays['position'][0], self.arrays['position'][1])
 
         if 'velocity' in data.keys():
             self.arrays['velocity'][0].append(time())
             self.arrays['velocity'][1].append(data['velocity'])
-            self.curves['velocity'].setData(self.arrays['velocity'][0], self.arrays['velocity'][1])
 
         if 'rotation' in data.keys():
-            x, y, z = self.rotator.process(((1,1,1),data['rotation']))
-            self.orientation.setData(pos=np.array(((0,0,0),(x,y,z))))
+            self.arrays['rotation'] = self.rotator.process(((0,0,1),data['rotation']))
+
 
     def l_image(self, image):
-        self.image.setImage(image['input'])
-        self.dlc_points.setData(pos=image[output][:,0:2])
+        self.img_q.append(image['input'])
+        self.dlc_q.append(np.fliplr(image['output'][:,0:2]))
 
 
 
