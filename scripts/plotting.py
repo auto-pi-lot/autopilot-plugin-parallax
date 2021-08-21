@@ -32,6 +32,15 @@ import pyqtgraph.opengl as gl
 import autopilot
 from autopilot.networking import Net_Node
 
+def mesh_sphere(x_points = 13, y_points=13):
+    u = np.linspace(0, 2 * np.pi, x_points)
+    v = np.linspace(0, np.pi, y_points)
+
+    x = np.outer(np.cos(u), np.sin(v))
+    y = np.outer(np.sin(u), np.sin(v))
+    z = np.outer(np.ones(np.size(u)), np.cos(v))
+    return np.column_stack((x.flatten(), y.flatten(), z.flatten()))
+
 class PlotWindow(QtWidgets.QMainWindow):
     def __init__(self, queue_size=500, *args, **kwargs):
         super(PlotWindow, self).__init__(*args, **kwargs)
@@ -59,9 +68,18 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.arrays['velocity'] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
 
         # orientation vector
+        self.sphere = gl.GLScatterPlotItem(pos=mesh_sphere(), color=(1,1,1,0.3),size=5)
         self.glview = gl.GLViewWidget()
-        self.orientation = gl.GLLinePlotItem()
+        self.glview.opts['distance']=3
+        self.orientation = gl.GLLinePlotItem(color=(1,0,0,1))
         self.glview.addItem(self.orientation)
+        self.glview.addItem(self.sphere)
+
+        gz = gl.GLGridItem()
+        gz.translate(0, 0, -1)
+        self.glview.addItem(gz)
+
+        self.rotator = autopilot.get('transform', 'Rotate')(dims='xy', inverse='y')
 
         # image display
         self.image = pg.ImageView(parent=self, name='Video Feed')
@@ -74,10 +92,10 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.layout.addWidget(self.image, 2,2, 2, 1)
 
         self.node = Net_Node(id='plotter',upstream='',port=9999,
-                             listens={'DATA':self.l_data},
+                             listens={'DATA':self.l_data,'IMAGE':self.l_image},
                              router_port=6000)
 
-        self.test()
+        #self.test()
 
     def test(self):
         for ax in ('x','y','z'):
@@ -95,7 +113,7 @@ class PlotWindow(QtWidgets.QMainWindow):
             for val, ax in zip(data['gyro'], ('x','y','z')):
                 self.arrays['gyro'][ax][0].append(time())
                 self.arrays['gyro'][ax][1].append(val)
-                self.curves['gyro'][ax].setData(self.arrays['accel'][ax][0], self.arrays['accel'][ax][1])
+                self.curves['gyro'][ax].setData(self.arrays['gyro'][ax][0], self.arrays['gyro'][ax][1])
 
         if 'position' in data.keys():
             self.arrays['position'][0].append(time())
@@ -106,6 +124,13 @@ class PlotWindow(QtWidgets.QMainWindow):
             self.arrays['velocity'][0].append(time())
             self.arrays['velocity'][1].append(data['velocity'])
             self.curves['velocity'].setData(self.arrays['velocity'][0], self.arrays['velocity'][1])
+
+        if 'rotation' in data.keys():
+            x, y, z = self.rotator.process(((1,1,1),data['rotation']))
+            self.orientation.setData(pos=np.array(((0,0,0),(x,y,z))))
+
+    def l_image(self, image):
+        print(image)
 
 
 

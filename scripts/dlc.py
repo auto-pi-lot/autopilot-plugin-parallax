@@ -10,10 +10,15 @@ if __name__ == "__main__":
                 }
         },),
         operation='stream',
+        value_subset='picam',
         return_id='sensor',
         return_ip='192.168.0.240',
         return_key="DLC",
-        router_port = 5002
+        router_port = 5002,
+        forward_id='plotter',
+        forward_ip='192.168.0.100',
+        forward_key='IMAGE',
+        forward_what='both'
     )
 
     while True:
