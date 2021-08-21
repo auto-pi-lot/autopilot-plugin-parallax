@@ -124,7 +124,7 @@ class PlotWindow(QtWidgets.QMainWindow):
 
         self.curves['position'].setData(self.arrays['position'][0], self.arrays['position'][1])
         self.curves['velocity']['estimated'].setData(self.arrays['velocity'][0][0], self.arrays['velocity'][0][1])
-        self.curves['velocity']['rotated'].setData(self.arrays['velocity'][0][0], self.arrays['velocity'][0][1])
+        self.curves['velocity']['rotated'].setData(self.arrays['velocity'][1][0], self.arrays['velocity'][1][1])
 
         self.orientation.setData(pos=np.array(((0, 0, 0), self.arrays['rotation'])))
 
