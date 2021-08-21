@@ -59,7 +59,8 @@ if __name__ == "__main__":
         logger.info('set state: '+ str(value))
         state.update(value)
 
-    global position = 0
+    global position
+    position = 0
     def get_dlc(value):
         global fusion
         global logger
