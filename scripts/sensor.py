@@ -4,6 +4,8 @@ from autopilot.transform import make_transform
 from threading import Lock
 from autopilot.core.loggers import init_logger
 
+M_PER_PX = .05/100
+
 if __name__ == "__main__":
     logger = init_logger(module_name='main', class_name='main')
 
@@ -66,7 +68,7 @@ if __name__ == "__main__":
         global logger
         global position
         logger.debug('dlc points: '+ str(value))
-        position = float(value[0,0])
+        position = float(value[0,0])*M_PER_PX
         measurement = fusion.Measurement(measure_type='position', value=position)
         update_fusion(measurement)
 
