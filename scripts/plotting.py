@@ -64,7 +64,7 @@ class PlotWindow(QtWidgets.QMainWindow):
                 self.curves[sensor][ax] = widg.plot(pen=color,name=ax)
                 self.arrays[sensor][ax] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
         self.curves['position'] = self.position.plot(name='z position')
-        self.curves['velocity'] = {'estimated': self.velocity.plot(name='estimated'), 'rotated': self.velocity.plot(name='rotated', color=(255,0,0))}
+        self.curves['velocity'] = {'estimated': self.velocity.plot(name='estimated'), 'rotated': self.velocity.plot(name='rotated', pen=(255,0,0))}
         self.arrays['position'] = (deque(maxlen=queue_size), deque(maxlen=queue_size))
         self.arrays['velocity'] = (
             (deque(maxlen=queue_size), deque(maxlen=queue_size)),
@@ -93,7 +93,7 @@ class PlotWindow(QtWidgets.QMainWindow):
         self.imagewidget = pg.PlotWidget(parent=self, title='Video Feed')
         self.image = pg.ImageItem()
         self.image.setZValue(-100)
-        self.dlc_points = pg.ScatterPlotItem()
+        self.dlc_points = pg.ScatterPlotItem(brush=(255,0,0))
         self.imagewidget.addItem(self.image)
         self.imagewidget.addItem(self.dlc_points)
 

@@ -1,4 +1,5 @@
 import autopilot
+import numpy as np
 from autopilot.networking import Net_Node
 from autopilot.core.loggers import init_logger
 
@@ -10,6 +11,13 @@ if __name__ == "__main__":
     global platform
     platform = autopilot.get('hardware', 'Parallax_Platform')()
     logger.info('platform initialized')
+    platform.level()
+    mask = np.zeros((6,6))
+    mask[2,:] = 1
+    platform.mask = mask
+    platform.height = platform.MAX_HEIGHT/2
+    platform.join()
+
     platform.move_mode = platform.Move_Modes.VELOCITY
 
     def set_state(value:dict):

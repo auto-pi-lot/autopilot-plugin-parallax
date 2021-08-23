@@ -11,7 +11,6 @@ if __name__ == "__main__":
 
     fusion_lock = Lock()
 
-
     imu_prefs = {
         'name':'imu',
         'invert_gyro': (0, 1),
