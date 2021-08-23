@@ -2,6 +2,7 @@ import autopilot
 import numpy as np
 from autopilot.networking import Net_Node
 from autopilot.core.loggers import init_logger
+import time
 
 if __name__ == "__main__":
     logger = init_logger(module_name='main', class_name='main')
@@ -45,4 +46,7 @@ if __name__ == "__main__":
         daemon=False
     )
     logger.info('networking init')
+    while True:
+        time.sleep(1)
+
 
