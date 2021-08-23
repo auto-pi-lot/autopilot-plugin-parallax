@@ -13,8 +13,8 @@ if __name__ == "__main__":
     platform = autopilot.get('hardware', 'Parallax_Platform')()
     logger.info('platform initialized')
     platform.level()
-    mask = np.zeros((6,6))
-    mask[2,:] = 1
+    mask = np.zeros((6,6), dtype=np.bool)
+    mask[2,:] = True
     platform.mask = mask
     platform.height = platform.MAX_HEIGHT/2
     platform.join()
