@@ -16,7 +16,7 @@ if __name__ == "__main__":
     mask = np.zeros((6,6), dtype=np.bool)
     mask[2,:] = True
     platform.mask = mask
-    platform.height = platform.MAX_HEIGHT/2
+    platform.height = int(round(platform.MAX_HEIGHT/2))
     platform.join()
 
     platform.move_mode = platform.Move_Modes.VELOCITY
